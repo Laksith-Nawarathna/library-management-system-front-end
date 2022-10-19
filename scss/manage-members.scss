@@ -1,0 +1,42 @@
+#nav-home{
+    cursor: pointer;
+        a{
+            text-decoration: none;
+            color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            justify-content: space-evenly;
+
+            ion-icon{
+                font-size: 2rem;
+
+            }
+            
+        }  
+}
+
+#nav-home{
+    display: inline-block;
+}
+
+#btn-new{
+    display: block;
+}
+
+#tbl-books{
+    th:first-child, tbody td:first-child{
+        width: 75px;
+        text-align: center;
+    }
+
+    th:nth-child(2), tbody td:nth-child(2){
+        width: 350px;
+        // text-align: center;
+    }
+
+    th:last-child, tbody td:last-child{
+        width: 150px;
+        text-align: center;
+    }
+} 
