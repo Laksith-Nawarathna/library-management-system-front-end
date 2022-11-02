@@ -24,6 +24,12 @@ header{
     th:first-child, tbody td:first-child{
         width: 75px;
         text-align: center;
+        max-width: 170px;
+        min-width: 110px;
+        word-break: keep-all;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     th:nth-child(2), tbody td:nth-child(2){
