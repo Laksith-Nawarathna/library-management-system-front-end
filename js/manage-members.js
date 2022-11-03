@@ -45,7 +45,8 @@ function getMembers(query = `${$('#txt-search').val()}`) {
                 });
             } else {
                 // console.error('Something went wrong');
-                $('#toast').show();
+                // $('#toast').toast('show');
+                showToast();
             }
         }
     });
@@ -146,9 +147,12 @@ $("#btn-new").click(() => {
     frmMemberDetail.show();
 });
 
-$("#frm-member-detail form").submit(()=> $("#btn-save").click());
+$("#frm-member-detail form").submit(()=> {
+    eventData.preventDefault();
+    $("#btn-save").click()
+});
 
-$("#btn-save").click(()=> {
+$("#btn-save").click(async ()=> {
 
     const name = $("#txt-name").val();
     const address = $("#txt-address").val();
@@ -174,43 +178,72 @@ $("#btn-save").click(()=> {
 
     if (!validated) return;
 
-    // try{
-    //     await saveMember();
-    //     alert("Successfully Saved");
-    // }catch(e){
-    //     alert('Failed to save the member');
-    // }
+    try{
+        $("#overlay").removeClass("d-none");
+        const {id} = await saveMember();
+        $("#overlay").addClass("d-none");
+        showToast(`Member has been saved successfully with the ID: ${id}`, 'success');
+        $("#txt-name, #txt-address, #txt-contact").val("");
+        $("#txt-name").focus();
+    }catch(e){
+        $("#overlay").addClass("d-none");
+        showToast("Failed to save the member, try again");
+        $("#txt-name").focus();
+    }
 });
 
 
 function saveMember(){
-    return new Promise((resolve,reject)=>{  //if  promise completed ->resolve funtion works if not reject funtion works
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();              // step 1
 
-        const xhr =new XMLHttpRequest();
-
-        xhr.addEventListener('readystatechange',()=>{
-            console.log(xhr.readyState,XMLHttpRequest.DONE)
-            if(xhr.readyState===xhr.DONE){
-                if(xhr.status===201){
-                    resolve();
+        xhr.addEventListener('readystatechange', ()=> {   // step 2
+            if (xhr.readyState === XMLHttpRequest.DONE){
+                if (xhr.status === 201){
+                    resolve(JSON.parse(xhr.responseText));  // promise full filled
                 }else{
                     reject();
                 }
             }
         });
 
-        xhr.open('POST','http://localhost:8080/lms/api/members',true);
-        xhr.setRequestHeader('Content-Type','application/json');
+        xhr.open('POST', 'http://localhost:8080/lms/api/members', true);  // step 3
+        xhr.setRequestHeader('Content-Type', 'application/json');   // step 4
 
-        const member ={
-            name:$('#txt-name').val(),
-            address:$('#txt-address').val(),
-            contact:$('#txt-contact').val()
+        const member = {
+            name: $("#txt-name").val(),
+            address: $("#txt-address").val(),
+            contact: $("#txt-contact").val()
         }
-        xhr.send(JSON.stringify(member));
+
+        xhr.send(JSON.stringify(member));  // step 5
 
     });
 }
+
+function showToast(msg, msgType = 'warning'){
+    $("#toast").removeClass('text-bg-warning')
+        .removeClass('text-bg-primary')
+        .removeClass('text-bg-error')
+        .removeClass('text-bg-success');
+
+    if (msgType === 'success'){
+        $("#toast").addClass('text-bg-success');
+    }else if (msgType === 'error'){
+        $("#toast").addClass('text-bg-error');
+    }else if(msgType === 'info'){
+        $("#toast").addClass('text-bg-primary');
+    }else {
+        $("#toast").addClass('text-bg-warning');
+    }
+
+    $("#toast .toast-body").text(msg);
+    $("#toast").toast('show');
+}
+
+$("#frm-member-detail").on(('hidden.bs.modal'), () => {
+    getMembers();
+});
 
 // doSomething();
 
