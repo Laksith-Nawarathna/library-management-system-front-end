@@ -1,5 +1,7 @@
 /* 5 steps of AJAX */
 
+const API_END_POINT = 'http://34.93.171.61:8080/lms/api';
+
 const pageSize = 6;
 let page = 2;
 
@@ -52,7 +54,7 @@ function getMembers(query = `${$('#txt-search').val()}`) {
     });
 
     /* 3. Open the request*/
-    http.open('GET', `http://localhost:8080/lms/api/members?size=${pageSize}&page=${page}&q=${query}`, true); // asynchronous true to avoid blocking if not js engine will block
+    http.open('GET', `${API_END_POINT}/members?size=${pageSize}&page=${page}&q=${query}`, true); // asynchronous true to avoid blocking if not js engine will block
 
     /* 4. Set additional information for the request */
     // using provided document (headers, ...)
@@ -207,7 +209,7 @@ function saveMember(){
             }
         });
 
-        xhr.open('POST', 'http://localhost:8080/lms/api/members', true);  // step 3
+        xhr.open('POST', `${API_END_POINT}/members`, true);  // step 3
         xhr.setRequestHeader('Content-Type', 'application/json');   // step 4
 
         const member = {
