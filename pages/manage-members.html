@@ -14,24 +14,29 @@
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
         crossorigin="anonymous"></script>
-        <script defer type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-        <script defer nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>    
+    <script defer type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script defer nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script defer src="../js/manage-members.js"></script>
 </head>
 
 <body class="container-xl">
 
     <header>
-        <h3 class="text-sm-center p-3"><ion-icon name="people-outline"></ion-icon> Manage Members</h3>
-        <a href="../index.html"><ion-icon name="close-outline"></ion-icon></a>
-   </header>
+        <h3 class="text-sm-center p-3">
+            <ion-icon name="people-outline"></ion-icon> Manage Members
+        </h3>
+        <a href="../index.html">
+            <ion-icon name="close-outline"></ion-icon>
+        </a>
+    </header>
 
     <main>
         <div class="d-flex justify-content-between">
             <div class="align-self-end px-1">Search members</div>
-            <button class="btn btn-primary">+ New Member</button>
+            <button id="btn-new" class="btn btn-primary">+ New Member</button>
         </div>
-        <input id="txt-search" type="text" class="mt-3 form-control" placeholder="Enter id, name, contact, address, etc. to search">
+        <input id="txt-search" type="text" class="mt-3 form-control"
+            placeholder="Enter id, name, contact, address, etc. to search">
         <table id="tbl-members" class="table table-hover mt-3">
             <thead>
                 <tr>
@@ -53,14 +58,19 @@
             </tfoot>
         </table>
         <div id="loader">
-            <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div>
-        </div>
+            <div class="lds-roller">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
     </main>
-        <nav id="pagination">
-            <ul class="pagination justify-content-center">
-               
-            </ul>
-        </nav>
+    <nav id="pagination">
+        <ul class="pagination justify-content-center">
+
+        </ul>
+    </nav>
     <div class="toast-container bottom-0 end-0 mb-3">
         <div id="toast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive"
             aria-atomic="true">
@@ -71,6 +81,73 @@
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                     aria-label="Close"></button>
             </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="frm-member-detail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Member Details</h1>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="txt-id" class="form-label">Member ID</label>
+                            <input type="text" class="form-control" id="txt-id">
+                        </div>
+                        <div class="mb-3">
+                            <label for="txt-name" class="form-label">Member Name</label>
+                            <input type="text" class="form-control" id="txt-name" placeholder="Eg. Kasun Sampath">
+                            <div class="invalid-feedback">Enter valid member name</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="txt-address" class="form-label">Member Address</label>
+                            <input type="text" class="form-control" id="txt-address"
+                                placeholder="Eg. #20/A, Galle Road, Panadura">
+                            <div class="invalid-feedback">Enter valid member address</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="txt-contact" class="form-label">Member Contact</label>
+                            <input type="text" class="form-control" id="txt-contact" placeholder="Eg. 011-1234567">
+                            <div class="invalid-feedback">Contact number should be in following format XXX-XXXXXXX</div>
+                        </div>
+                        <button class="d-none"></button>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button id="btn-close" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <ion-icon name="close-outline"></ion-icon>
+                        Close
+                    </button>
+                    <button id="btn-edit" type="button" class="btn btn-primary">
+                        <ion-icon name="create-outline"></ion-icon>
+                        Edit Details
+                    </button>
+                    <button id="btn-save" type="button" class="btn btn-primary d-none">
+                        <ion-icon name="create-outline"></ion-icon>
+                        Save
+                    </button>
+                    <div id="edit-buttons-wrapper" class="d-none">
+                        <button id="btn-delete" type="button" class="btn btn-danger">
+                            <ion-icon name="trash-bin-outline"></ion-icon>
+                            Delete
+                        </button>
+                        <button id="btn-update" type="button" class="btn btn-success">
+                            <ion-icon name="save-outline"></ion-icon>
+                            Update
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay" class="d-flex justify-content-center align-items-center"> 
+        <div id="overlay-loader">
+            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
     </div>
 </body>
