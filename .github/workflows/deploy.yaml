@@ -8,20 +8,36 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3   # clone main branch
+      - name: Checking out the latest commit
+        uses: actions/checkout@v3   # clone main branch to the machine provided by github
 
-      - uses: actions/setup-node@v3 # to convert sass into css we need node
+      - name: Installing NodeJS
+        uses: actions/setup-node@v3 # to convert sass into css, we need node
         with:
           node-version: 18
 
-      - run: npm install -g sass
+      - name: Installing SASS
+        run: npm install -g sass
 
-      - run: sass scss:css
+      - name: 'Compiling *.scss files to *.css'
+        run: sass scss:css
 
-      - run: mkdir dist
+      - name: Creating the dist directory
+        run: mkdir dist
 
-      - run: cp -r css pages js index.html dist/
+      - name: Copying everything to the dist directory
+        run: cp -r css pages js index.html dist/
 
-      - run: zip -r dist.zip dist/
+      - name: Creating a zip file for deployment
+        run: zip -r dist.zip dist/
 
-      - run: ls -la .
+      - name: Authenticating to GCP
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Setting up the gcloud
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: Deploy the dist.zip
+        run: gcloud compute scp dist.zip dep-9-vm:/opt
