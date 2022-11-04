@@ -49,7 +49,7 @@ jobs:
       - name: Extracting the Zipping
         run: >
          gcloud compute ssh --zone="asia-south1-a" dep-9-vm 
-         --command="sudo unzip /opt/apache/apache-tomcat-10.1.1/webapps/lms/dist.zip"
+         --command="sudo unzip /opt/apache/apache-tomcat-10.1.1/webapps/lms/dist.zip /opt/apache/apache-tomcat-10.1.1/webapps/lms"
 
       - name: Cleaning left overs
         run: >
