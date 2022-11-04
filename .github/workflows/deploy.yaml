@@ -7,5 +7,5 @@ on:
 jobs: 
   build:
     runs-on: ubuntu-latest
-  steps:
-    - run: echo "Hello CI/CD!"
+    steps:
+      - run: echo "Hello CI/CD!"
