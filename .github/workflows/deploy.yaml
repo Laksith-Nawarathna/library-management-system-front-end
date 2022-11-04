@@ -36,7 +36,7 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v0'
 
       - name: Deploying the Zipping
-        run: gcloud compute scp dist.zip root@dep-9-vm:/opt/apache/apache-tomcat-10.1.1/webapps/lms
+        run: gcloud compute scp --zone="asia-south1-a" dist.zip root@dep-9-vm:/opt/apache/apache-tomcat-10.1.1/webapps/lms
 
       - name: Clean up old stuff
         run: >
