@@ -8,4 +8,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Hello CI/CD!"
+      - uses: actions/checkout@v3   # clone main branch
+
+      - uses: actions/setup-node@v3 # to convert sass into css we need node
+        with:
+          node-version: 18
+
+      - run: npm install -g sass
+
+      - run: sass scss:css
+
+      - run: mkdir dist
+
+      - run: cp -r css pages js index.html dist/
+
+      - run: zip -r dist.zip dist/
+
+      - run: ls -la .
