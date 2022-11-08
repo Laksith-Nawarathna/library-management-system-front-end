@@ -1,6 +1,7 @@
 /* 5 steps of AJAX */
 
-const API_END_POINT = 'http://34.93.171.61:8080/lms/api';
+// const API_END_POINT = 'http://34.93.171.61:8080/lms/api';
+const API_END_POINT = 'http://localhost:8080/lms/api';
 
 const pageSize = 6;
 let page = 2;
@@ -67,6 +68,12 @@ function getMembers(query = `${$('#txt-search').val()}`) {
 
 function initPagination(totalMembers) {
     const totalPages = Math.ceil(totalMembers / pageSize);
+
+    if(page > totalPages){
+        page = totalPages;
+        getMembers();
+        return;  
+    } 
 
     if (totalPages <= 1) {
         $("#pagination").addClass('d-none');
@@ -140,21 +147,25 @@ $(document).keydown((eventData) => {
 
 $("#btn-new").click(() => {
     const frmMemberDetail = new bootstrap.Modal(document.getElementById('frm-member-detail'));
+    $('#txt-id, #txt-name, #txt-address, #txt-contact').attr('disabled',false).val('');
+
     $("#frm-member-detail")
+        .removeClass('edit')
         .addClass('new')
         .on('shown.bs.modal', () => {
             $("#txt-name").focus();
         });
 
+
     frmMemberDetail.show();
 });
 
-$("#frm-member-detail form").submit(()=> {
+$("#frm-member-detail form").submit(() => {
     eventData.preventDefault();
     $("#btn-save").click()
 });
 
-$("#btn-save").click(async ()=> {
+$("#btn-save").click(async () => {
 
     const name = $("#txt-name").val();
     const address = $("#txt-address").val();
@@ -163,31 +174,31 @@ $("#btn-save").click(async ()=> {
 
     $("#txt-name, #txt-address, #txt-contact").removeClass('is-invalid');
 
-    if (!/^\d{3}-\d{7}$/.test(contact)){
+    if (!/^\d{3}-\d{7}$/.test(contact)) {
         $("#txt-contact").addClass('is-invalid').select().focus();
         validated = false;
     }
 
-    if (!/^[A-Za-z0-9#|, .\/\\:;-]+$/.test(address)){
+    if (!/^[A-Za-z0-9#|, .\/\\:;-]+$/.test(address)) {
         $("#txt-address").addClass('is-invalid').select().focus();
         validated = false;
     }
 
-    if (!/^[A-Za-z ]+$/.test(name)){
+    if (!/^[A-Za-z ]+$/.test(name)) {
         $("#txt-name").addClass('is-invalid').select().focus();
         validated = false;
     }
 
     if (!validated) return;
 
-    try{
+    try {
         $("#overlay").removeClass("d-none");
-        const {id} = await saveMember();
+        const { id } = await saveMember();
         $("#overlay").addClass("d-none");
         showToast(`Member has been saved successfully with the ID: ${id}`, 'success');
         $("#txt-name, #txt-address, #txt-contact").val("");
         $("#txt-name").focus();
-    }catch(e){
+    } catch (e) {
         $("#overlay").addClass("d-none");
         showToast("Failed to save the member, try again");
         $("#txt-name").focus();
@@ -195,15 +206,15 @@ $("#btn-save").click(async ()=> {
 });
 
 
-function saveMember(){
+function saveMember() {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();              // step 1
 
-        xhr.addEventListener('readystatechange', ()=> {   // step 2
-            if (xhr.readyState === XMLHttpRequest.DONE){
-                if (xhr.status === 201){
+        xhr.addEventListener('readystatechange', () => {   // step 2
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 201) {
                     resolve(JSON.parse(xhr.responseText));  // promise full filled
-                }else{
+                } else {
                     reject();
                 }
             }
@@ -223,19 +234,19 @@ function saveMember(){
     });
 }
 
-function showToast(msg, msgType = 'warning'){
+function showToast(msg, msgType = 'warning') {
     $("#toast").removeClass('text-bg-warning')
         .removeClass('text-bg-primary')
         .removeClass('text-bg-error')
         .removeClass('text-bg-success');
 
-    if (msgType === 'success'){
+    if (msgType === 'success') {
         $("#toast").addClass('text-bg-success');
-    }else if (msgType === 'error'){
+    } else if (msgType === 'error') {
         $("#toast").addClass('text-bg-error');
-    }else if(msgType === 'info'){
+    } else if (msgType === 'info') {
         $("#toast").addClass('text-bg-primary');
-    }else {
+    } else {
         $("#toast").addClass('text-bg-warning');
     }
 
@@ -281,3 +292,146 @@ $("#frm-member-detail").on(('hidden.bs.modal'), () => {
 //         console.log("Awul2");
 //     });
 // }
+
+
+$('#tbl-members tbody').click(({ target }) => {
+    if (!target) return;
+    let rowElm = target.closest('tr');
+    // let rowElm = null;
+    // if (target instanceof HTMLTableRowElement) {
+    //     rowElm = target;
+    // } else if (target instanceof HTMLTableCellElement) {
+    //     rowElm = target.parentElement;
+    // } else {
+    //     return;
+    // }
+
+    getMemberDetail($(rowElm.cells[0]).text());
+});
+
+async function getMemberDetail(memberId) {
+
+    try {
+        const response = await fetch(`${API_END_POINT}/members/${memberId}`);
+        if (response.ok) {
+            const member = await response.json();
+            const frmMemberDetail = new
+                bootstrap.Modal(document.getElementById('frm-member-detail'));
+            $("#frm-member-detail")
+                .removeClass('new')
+                .removeClass('edit');
+            $('#txt-id').attr('disabled', true).val(member.id);
+            $('#txt-name').attr('disabled', true).val(member.name);
+            $('#txt-address').attr('disabled', true).val(member.address);
+            $('#txt-contact').attr('disabled', true).val(member.contact);
+
+            frmMemberDetail.show();
+        } else {
+            throw new Error(response.status);
+        }
+    } catch (error) {
+        showToast("Failed to fetch the member details");
+    }
+
+    // const http = new XMLHttpRequest();
+
+    // http.addEventListener('readystatechange', () => {
+    //     if (http.readyState === XMLHttpRequest.DONE) {
+    //         if (http.status === 200) {
+    //             const member = JSON.parse(http.responseText);
+    //             const frmMemberDetail = new
+    //                 bootstrap.Modal(document.getElementById('frm-member-detail'));
+    //             $("#frm-member-detail")
+    //                 .removeClass('new');
+    //                 $('#txt-id').attr('disabled','true').val(member.id);
+    //                 $('#txt-name').attr('disabled','true').val(member.name);
+    //                 $('#txt-address').attr('disabled','true').val(member.address);
+    //                 $('#txt-contact').attr('disabled','true').val(member.contact);
+
+    //             frmMemberDetail.show();
+    //         } else {
+    //             showToast("Failed to fetch the member details");
+    //         }
+    //     }
+    // });
+
+    // http.open('GET', `${API_END_POINT}/members/${memberId}`, true);
+    // http.send();
+}
+
+$('#btn-edit').click(() => {
+    $('#frm-member-detail').addClass('edit');
+    $('#txt-name, #txt-address, #txt-contact').attr('disabled',false);
+});
+
+$('#btn-delete').click(async () => {
+    $('#overlay').removeClass('d-none');
+    try{
+        const response = await fetch(`${API_END_POINT}/members/${$('#txt-id').val()}`, {method: 'DELETE'});
+        if(response.status === 204){
+            showToast("Member has been deleted successfully", 'success');
+            const frmMemberDetail = new
+                bootstrap.Modal(document.getElementById('frm-member-detail'));
+            $('#btn-close').click();
+        }else{
+            throw new Error(response.status);
+        }
+    }catch(error){
+        showToast("Failed to delete the member, try again");
+    }finally{
+        $('#overlay').addClass('d-none');
+    }
+
+});
+
+$('#btn-update').click(async () => {
+    const name = $("#txt-name").val();
+    const address = $("#txt-address").val();
+    const contact = $("#txt-contact").val();
+    let validated = true;
+
+    $("#txt-name, #txt-address, #txt-contact").removeClass('is-invalid');
+
+    if (!/^\d{3}-\d{7}$/.test(contact)) {
+        $("#txt-contact").addClass('is-invalid').select().focus();
+        validated = false;
+    }
+
+    if (!/^[A-Za-z0-9#|, .\/\\:;-]+$/.test(address)) {
+        $("#txt-address").addClass('is-invalid').select().focus();
+        validated = false;
+    }
+
+    if (!/^[A-Za-z ]+$/.test(name)) {
+        $("#txt-name").addClass('is-invalid').select().focus();
+        validated = false;
+    }
+
+    if (!validated) return;
+
+    $('#overlay').removeClass('d-none');
+
+    try{
+        const response = await fetch(`${API_END_POINT}/members/${$('#txt-id').val()}`, 
+        {
+            method: 'PATCH',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({
+                id: $('#txt-id').val(),
+                name, address, contact
+            })
+        });
+
+        if(response.status === 204){
+            showToast("Member has been updated successfully", 'success');
+        }else{
+            throw new Error(response.status);
+        }
+    }catch(error){
+        showToast("Failed to update the member, try again");
+    }finally{
+        $('#overlay').addClass('d-none');
+    }
+});

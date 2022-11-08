@@ -50,6 +50,10 @@ header{
     tfoot{
         display: none;
     }
+
+    tr td{
+      cursor: pointer;
+    }
 } 
 
 #loader{
