@@ -1,0 +1,30 @@
+header{
+    position: relative;
+
+    h3{
+        ion-icon{
+            vertical-align: middle;
+            padding-right: 10px;
+        }
+    }
+
+    a{
+        position: absolute;
+        right: 10px;
+        top: 5px;
+        font-size: 2.5rem;
+    }
+}
+
+#tbl-books{
+    th:first-child,
+    tbody td:first-child{
+        max-width: 170px;
+        min-width: 110px;
+       
+    }
+}
+
+
+
+

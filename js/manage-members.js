@@ -71,6 +71,7 @@ function initPagination(totalMembers) {
 
     if(page > totalPages){
         page = totalPages;
+        if(page === 0) page = 1;
         getMembers();
         return;  
     } 
@@ -133,6 +134,12 @@ $('#tbl-members tbody').keyup((eventData) => {
         const elm = document.activeElement.nextElementSibling;
         if (elm instanceof HTMLTableRowElement) {
             elm.focus();
+        }
+    }
+    else if(eventData.which === 13){  // for enter key
+        const elm = document.activeElement;
+        if(elm instanceof HTMLTableRowElement){
+            elm.click();
         }
     }
 });
